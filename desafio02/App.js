@@ -46,14 +46,14 @@ export default function App() {
     <View style={styles.container}>
        <View style={styles.content}>
         <Input
-          placeholder="new task"
+          placeholder="New list"
           style={styles.input}
           placeholderTextColor="#6B4E71"
           value={text}
           onChangeText={(text) => handleOnChangeText(text)}
           keyboardType="numeric"
         />
-        <Button title="Add" onPress={() => addItem()}  />
+        <Button title="Add List" onPress={() => addItem()}  />
       </View>
       <FlatList
         data={list}
