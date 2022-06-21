@@ -1,6 +1,5 @@
 import {StyleSheet} from "react-native";
 
-
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -13,5 +12,11 @@ export const styles = StyleSheet.create({
         marginTop: 20,
         width: 300,
         maxWidth: "80%"
+    },
+    headline: {
+        fontSize: 20
+    },
+    subtitle: {
+        fontSize: 18
     }
 })
