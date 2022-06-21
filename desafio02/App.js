@@ -1,78 +1,45 @@
-import React, {useState} from "react";
-import { Button, Text, TextInput, View, FlatList, TouchableOpacity } from 'react-native';
-import ListItem from "./src/components/list-item";
-import Input from "./src/components/input";
-import CustomModal from "./src/components/modal";
-import CloseModal from "./src/components/close-modal";
+import {useState} from "react";
+import {View, SafeAreaView, ActivityIndicator } from 'react-native';
+import {Header} from "./src/components";
+import GameScreen from "./screens/game-screen";
+import StartGame from "./screens/start-game";
 import {styles} from "./styles";
+import {useFonts} from "expo-font";
+import theme from "./constants/theme";
 
 export default function App() {
-  const [text, setText] = useState("");
-  const [list, setList] = useState([]);
-  const [itemSelected, setItemSelected] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
 
-  const handleOnChangeText = (text) => {
-    setText(text);
-  }
-  const addItem = () => {
-    if (text !== "") {
-      setList((currentList) => [
-        ...currentList,
-        { id: Math.random(), value: text },
-      ]);
-      setText("");
-    }
-  };
+  const [loaded] = useFonts({
+    "open-sans": require("./assets/fonts/OpenSans/OpenSans-Regular.ttf"),
+    "open-sans-bold": require("./assets/fonts/OpenSans/OpenSans-Bold.ttf"),
+    "open-sans-semibold": require("./assets/fonts/OpenSans/OpenSans-SemiBold.ttf"),
+    "open-sans-extrabold": require("./assets/fonts/OpenSans/OpenSans-ExtraBold.ttf"),
+    "open-sans-italic": require("./assets/fonts/OpenSans/OpenSans-Italic.ttf"),
+  })
 
-  const onHandlerDelete = (id) => {
-    setList((currentList) => currentList.filter((item) => item.id !== id));
-    setItemSelected({});
-    setModalVisible(!modalVisible);
+  const [userNumber, setUserNumber] = useState();
+
+  if(!loaded) {
+    return <ActivityIndicator size="large" color={theme.colors.primary} />
   }
 
-  const onHandlerModal = (id) => {
-      setItemSelected(list.filter(item => item.id === id)[0]);
-      setModalVisible(!modalVisible);
+  const onStartGame = (selectedNumber) => {
+    setUserNumber(selectedNumber);
   }
 
-  const renderItem = ({ item }) => (
-    <ListItem item={item} onHandlerModal={onHandlerModal}/>
-  )
+  let content = <StartGame onStartGame={onStartGame} />
 
-  const keyExtractor = (item) => item.id.toString();
+  if(userNumber) {
+    content = <GameScreen userOptions={userNumber} />
+  }
 
   return (
-    <View style={styles.container}>
-       <View style={styles.content}>
-        <Input
-          placeholder="New list"
-          style={styles.input}
-          placeholderTextColor="#6B4E71"
-          value={text}
-          onChangeText={(text) => handleOnChangeText(text)}
-          keyboardType="numeric"
-        />
-        <Button title="Add List" onPress={() => addItem()}  />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <Header title="Adivina el número"/>
+        {content}
       </View>
-      <FlatList
-        data={list}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        style={styles.containerList}
-      />
-      <CustomModal
-        animationType="slide"
-        visible={modalVisible}
-        onRequestClose={() => null}
-      >
-        <CloseModal 
-        onHandlerDelete={onHandlerDelete}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        itemSelected={itemSelected}
-        />
-      </CustomModal>
-    </View>
+    </SafeAreaView>
   );
 }
+
